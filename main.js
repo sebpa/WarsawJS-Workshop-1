@@ -8,10 +8,11 @@ class Gallery {
         this.currentPhotoId = 0;
         this.buildImagesArray();
         this.displayCurrentPhoto();
-        this.setupClickListeners();
+        this.setupNavigationListeners();
+        this.setupPhotosListeners();
     }
 
-    clickHandler(buttonId) {
+    clickNavHandler(buttonId) {
         switch (buttonId) {
             case 'next-button':
                 if (this.currentPhotoId < this.images.length - 1) this.currentPhotoId++;
@@ -34,27 +35,45 @@ class Gallery {
     }
 
     displayCurrentPhoto() {
-        // 1. pobierz zdjecie z tablicy zdjec na podstawie aktualnego Id (currentPhotoId)
-        // 2. wyswietlic zdjecie na stronie
+        // gets url for the current photo and inserts it in proper place
         let currentPhotoSource = this.images[this.currentPhotoId].src;
         let $imgTag = document.getElementById("current-photo");
         $imgTag.setAttribute("src", currentPhotoSource)
     }
 
-    setupClickListeners() {
-        // 1. pobrac z DOM przyciski previous-button i next-button
-        // 2. dodać nasłuchiwanie na tych przyciskach
-        // 3. uruchomić funkcję
+    setupNavigationListeners() {
         let $previousButton = document.getElementById("previous-button");
         let $nextButton = document.getElementById("next-button");
         $previousButton.addEventListener("click", () => {
-            this.clickHandler($previousButton.id);
+            this.clickNavHandler($previousButton.id);
             this.displayCurrentPhoto();
         });
         $nextButton.addEventListener("click", () => {
-            this.clickHandler($nextButton.id);
+            this.clickNavHandler($nextButton.id);
             this.displayCurrentPhoto();
         });
+    }
+
+    setupPhotosListeners() {
+        let $photos = document.querySelectorAll("header > img");
+        let photosArray = Array.prototype.slice.call($photos);
+        photosArray.forEach((photo) => {
+            photo.addEventListener("click", () => {
+                this.currentPhotoId = photo.id;
+                this.displayCurrentPhoto();
+            })
+        })
+    }
+
+    setupPhotosListeners2() {
+        let $photos = document.querySelectorAll("header > img");
+        let photosArray = Array.prototype.slice.call($photos);
+        photosArray.forEach(function(photo) {
+            photo.addEventListener("click", function() {
+                this.currentPhotoId = photo.id;
+                this.displayCurrentPhoto();
+            }.bind(this))
+        }.bind(this))
     }
 }
 
