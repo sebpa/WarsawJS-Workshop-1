@@ -16,6 +16,6 @@ klikalnych miniaturek.
 ### Demo
 
 działające demo można znaleźć tu ->
-https://sebpa.github.io/warsawjs-workshop-1/
+https://sebpa.github.io/WarsawJS-Workshop-1/
 
 ---
