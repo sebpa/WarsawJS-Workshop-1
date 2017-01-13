@@ -1,28 +1,18 @@
 /**
  * Created by sebpa on 04/12/2016.
  */
+const DELAY = 3000;
 
 class Gallery {
     constructor() {
         this.images = [];
         this.currentPhotoId = 0;
+        this.interval = null;
         this.buildImagesArray();
         this.displayCurrentPhoto();
         this.setupNavigationListeners();
         this.setupPhotosListeners();
-    }
-
-    clickNavHandler(buttonId) {
-        switch (buttonId) {
-            case 'next-button':
-                if (this.currentPhotoId < this.images.length - 1) this.currentPhotoId++;
-                break;
-            case 'previous-button':
-                if (this.currentPhotoId > 0) this.currentPhotoId--;
-                break;
-            default:
-                break;
-        }
+        this.setupInterval();
     }
 
     buildImagesArray() {
@@ -45,12 +35,12 @@ class Gallery {
         let $previousButton = document.getElementById("previous-button");
         let $nextButton = document.getElementById("next-button");
         $previousButton.addEventListener("click", () => {
-            this.clickNavHandler($previousButton.id);
-            this.displayCurrentPhoto();
+            this.showPreviousPhoto();
+            this.restartInterval(); //because we want to postpone auto change of photo
         });
         $nextButton.addEventListener("click", () => {
-            this.clickNavHandler($nextButton.id);
-            this.displayCurrentPhoto();
+            this.showNextPhoto();
+            this.restartInterval(); //because we want to postpone auto change of photo
         });
     }
 
@@ -65,15 +55,29 @@ class Gallery {
         })
     }
 
-    setupPhotosListeners2() {
-        let $photos = document.querySelectorAll("header > img");
-        let photosArray = Array.prototype.slice.call($photos);
-        photosArray.forEach(function(photo) {
-            photo.addEventListener("click", function() {
-                this.currentPhotoId = photo.id;
-                this.displayCurrentPhoto();
-            }.bind(this))
-        }.bind(this))
+    showNextPhoto() {
+        this.currentPhotoId = (this.currentPhotoId + 1) % this.images.length;
+        this.displayCurrentPhoto();
+    }
+
+    showPreviousPhoto() {
+        if (this.currentPhotoId == 0) {
+            this.currentPhotoId = this.images.length - 1;
+        } else {
+            this.currentPhotoId -= 1;
+        }
+        this.displayCurrentPhoto();
+    }
+
+    setupInterval() {
+        this.interval = setInterval( () => {
+            this.showNextPhoto();
+        }, DELAY)
+    }
+
+    restartInterval() {
+        clearInterval(this.interval);
+        this.setupInterval();
     }
 }
 
